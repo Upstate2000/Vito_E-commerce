@@ -1,0 +1,198 @@
+{% extends "base.html" %}
+{% load static %}
+{% load currency_filters %}
+
+{% block content %}
+<div class="container my-4">
+  <div class="row gx-4 no-gutters">
+
+  <!-- Sidebar categorías -->
+  <aside class="col-lg-3 order-lg-1 mb-3">
+    <div class="card sticky-sidebar">
+      <div class="card-body p-0">
+        <ul class="category-menu mb-0">
+          {% for cat in categories %}
+            <li class="category-menu__item">
+              <div class="category-header d-flex align-items-center">
+                {% if cat.icon %}
+                  <img src="{{ cat.icon.url }}" alt="{{ cat.name }}" class="ui-category-icon" loading="lazy">
+                {% else %}
+                  <i class="ui-category-icon ui-category-icon--fallback" aria-hidden="true"></i>
+                {% endif %}
+                <a href="{{ cat.get_absolute_url }}"
+                   class="category-link {% if current_category and cat.pk == current_category.pk %}active{% endif %}"
+                   {% if current_category and cat.pk == current_category.pk %}aria-current="true"{% endif %}>
+                  {{ cat.name }}
+                </a>
+              </div>
+            </li>
+          {% empty %}
+            <li class="category-menu__item text-muted px-3 py-2">No hay categorías</li>
+          {% endfor %}
+        </ul>
+      </div>
+    </div>
+  </aside>
+
+    <!-- PRODUCTOS -->
+    <section class="col-lg-9 order-lg-2">
+      <div class="d-flex justify-content-between align-items-center mb-3">
+        <h4 class="mb-0" style="word-break: break-word;">
+          {% if current_category %}
+            {{ current_category.name }}
+          {% else %}
+            Todos los productos
+          {% endif %}
+        </h4>
+
+        {% if products.paginator %}
+          <div class="text-muted small">Mostrando {{ products.paginator.count }} resultados</div>
+        {% else %}
+          <div class="text-muted small">Mostrando {{ products|length }} resultados</div>
+        {% endif %}
+      </div>
+
+      <div class="row row-cols-1 row-cols-sm-2 row-cols-md-4 g-3">
+        {% for product in products %}
+          <div class="col">
+            <div class="card h-100 product-card">
+              <!-- Imagen cuadrada -->
+              <a href="#" data-bs-toggle="modal" data-bs-target="#modal-{{ product.id }}" class="d-block">
+                <div class="product-image" role="img" aria-label="{{ product.name }}">
+                  {% if product.image %}
+                    <img src="{{ product.image.url }}" alt="{{ product.name }}" loading="lazy">
+                  {% else %}
+                    <img src="{% static 'img/no-imagen.jpg' %}" alt="Imagen no disponible" loading="lazy">
+                  {% endif %}
+                </div>
+              </a>
+
+              <div class="card-body d-flex flex-column">
+                <!-- Nombre del producto -->
+                <h6 class="card-title mb-1">{{ product.name }}</h6>
+
+                <!-- Footnote -->
+                {% if product.footnote %}
+                  <div class="product-format product-format__size--cell mb-2" aria-label="{{ product.footnote }}" tabindex="-1">
+                    <span class="footnote1-r" aria-hidden="true">{{ product.footnote }}</span>
+                  </div>
+                {% endif %}
+
+                <!-- Precio por unidad -->
+                <div class="price text-start mb-3" aria-label="{{ product.price|format_cop }} por Unidad" tabindex="-1">
+                  <div class="d-flex align-items-baseline gap-1">
+                    <strong class="product-price__unit-price">{{ product.price|format_cop }}</strong>
+                    <span class="product-price__extra-price">/ud.</span>
+                  </div>
+                </div>
+
+                <!-- Botón añadir al carrito -->
+                <div class="mt-auto">
+                  <form action="{% url 'cart:add' product.id %}" method="post" class="d-flex justify-content-end">
+                    {% csrf_token %}
+                    <input type="hidden" name="next" value="{{ request.get_full_path }}">
+                    <input type="hidden" name="quantity" value="1">
+                    {% if product.stock|default:0 > 0 %}
+                      <button type="submit" class="btn btn-sm btn-primary">Añadir al carro</button>
+                    {% else %}
+                      <button type="submit" class="btn btn-sm btn-outline-secondary" disabled aria-disabled="true">Agotado</button>
+                    {% endif %}
+                  </form>
+                </div>
+              </div>
+            </div>
+
+<!-- Modal detalle -->
+<div class="modal fade" id="modal-{{ product.id }}" tabindex="-1" aria-hidden="true">
+  <div class="modal-dialog modal-lg modal-dialog-centered">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title">{{ product.name }}</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cerrar"></button>
+      </div>
+
+      <div class="modal-body">
+        <div class="row">
+          <div class="col-md-5">
+            {% if product.image %}
+              <img src="{{ product.image.url }}" alt="{{ product.name }}" class="img-fluid mb-3" loading="lazy">
+            {% else %}
+              <div class="placeholder border d-flex align-items-center justify-content-center" style="height:200px;">Sin imagen</div>
+            {% endif %}
+          </div>
+
+          <div class="col-md-7">
+            <p class="category mb-2">
+              <strong>Categoría:</strong>
+              {% if product.category %}<a href="{{ product.category.get_absolute_url }}">{{ product.category.name }}</a>{% else %}<span class="text-muted">—</span>{% endif %}
+            </p>
+            
+            {% if product.footnote %}
+              <div class="modal-footnote mb-3" id="footnote-{{ product.id }}" aria-label="Nota">
+                <small class="text-muted">{{ product.footnote }}</small>
+              </div>
+            {% endif %}
+
+            <p class="description mb-3">{{ product.description|linebreaks }}</p>
+
+
+            <p class="price h5 mb-2"><strong>Precio:</strong> {{ product.price|format_cop }}</p>
+
+            <p class="stock mb-3">
+              {% if product.stock|default:0 > 0 %}
+                En stock: {{ product.stock }}
+              {% else %}
+                <span class="text-danger">Agotado</span>
+              {% endif %}
+            </p>
+
+            {% if product.stock|default:0 > 0 %}
+              <form action="{% url 'cart:add' product.id %}" method="post" class="d-flex align-items-center gap-2" aria-describedby="{% if product.footnote %}footnote-{{ product.id }}{% endif %}">
+                {% csrf_token %}
+                <label for="quantity-{{ product.id }}" class="form-label mb-0">Cantidad</label>
+                <input type="number" id="quantity-{{ product.id }}" name="quantity" value="1" min="1" max="{{ product.stock }}" class="form-control form-control-sm" style="width:80px;">
+                <button type="submit" class="btn btn-primary btn-sm">Añadir al carro</button>
+              </form>
+            {% endif %}
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+          </div>
+        {% empty %}
+          <div class="col-12">
+            <div class="alert alert-info mb-0">No se encontraron productos.</div>
+          </div>
+        {% endfor %}
+      </div>
+
+      <!-- Paginación -->
+      <nav class="mt-4" aria-label="Paginación productos">
+        {% if products.paginator and products.has_other_pages %}
+          <ul class="pagination justify-content-center">
+            {% if products.has_previous %}
+              <li class="page-item"><a class="page-link" href="?page={{ products.previous_page_number }}">Anterior</a></li>
+            {% else %}
+              <li class="page-item disabled"><span class="page-link">Anterior</span></li>
+            {% endif %}
+
+            {% for p in products.paginator.page_range %}
+              <li class="page-item {% if products.number == p %}active{% endif %}">
+                <a class="page-link" href="?page={{ p }}">{{ p }}</a>
+              </li>
+            {% endfor %}
+
+            {% if products.has_next %}
+              <li class="page-item"><a class="page-link" href="?page={{ products.next_page_number }}">Siguiente</a></li>
+            {% else %}
+              <li class="page-item disabled"><span class="page-link">Siguiente</span></li>
+            {% endif %}
+          </ul>
+        {% endif %}
+      </nav>
+    </section>
+  </div>
+</div>
+{% endblock %}

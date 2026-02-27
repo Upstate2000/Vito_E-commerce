@@ -1,0 +1,49 @@
+{% load static %}
+{% load currency_filters %}
+
+<ul class="shopping-list mb-4">
+  {% for item in cart %}
+    <li class="shopping-item d-flex gap-3 align-items-start" id="shopping-item-{{ item.product.id }}">
+      <div class="shopping-item__media" style="flex:0 0 56px;">
+        {% if item.product.image %}
+          <img src="{{ item.product.image.url }}" alt="{{ item.product.name }}" loading="lazy" style="height:56px;width:56px;object-fit:cover;border-radius:6px;">
+        {% else %}
+          <img src="{% static 'img/no-imagen.jpg' %}" alt="Sin imagen de {{ item.product.name }}" loading="lazy" style="height:56px;width:56px;object-fit:cover;border-radius:6px;">
+        {% endif %}
+      </div>
+
+      <div class="shopping-item__body flex-grow-1">
+        <a href="{{ item.product.get_absolute_url }}" class="h6 text-dark fw-semibold d-block text-truncate" title="{{ item.product.name }}">
+          {{ item.product.name }}
+        </a>
+
+        {% if item.product.short_description %}
+          <div class="text-muted small">{{ item.product.short_description }}</div>
+        {% endif %}
+
+        <div class="d-flex justify-content-between align-items-center mt-2">
+          <div>
+            <span class="fw-semibold">{{ item.price|format_cop }}</span>
+            <span class="small text-muted">/ud.</span>
+          </div>
+
+          <form action="{% url 'cart:add' item.product.id %}" method="post" class="cart-form-inline d-flex align-items-center" aria-label="Actualizar cantidad de {{ item.product.name }}">
+            {% csrf_token %}
+            <input type="hidden" name="next" value="{{ request.get_full_path }}">
+            <input type="number" name="quantity" value="{{ item.quantity }}" min="1" max="{{ item.product.stock|default:9999 }}" class="form-control form-control-sm" style="width:90px;">
+            <button type="submit" class="btn btn-sm btn-outline-primary ms-2">Actualizar</button>
+          </form>
+        </div>
+
+        <div class="d-flex justify-content-between align-items-center mt-2">
+          <div class="fw-bold">{{ item.total_price|format_cop }}</div>
+          <form action="{% url 'cart:remove' item.product.id %}" method="post" class="d-inline" aria-label="Eliminar {{ item.product.name }}">
+            {% csrf_token %}
+            <input type="hidden" name="next" value="{{ request.get_full_path }}">
+            <button type="submit" class="btn btn-sm btn-outline-danger">Eliminar</button>
+          </form>
+        </div>
+      </div>
+    </li>
+  {% endfor %}
+</ul>

@@ -1,0 +1,230 @@
+/* static/css/accounts.css
+   Estilos completos para accounts: floating labels, cards, botones, avatar, mensajes y responsive.
+*/
+
+/* Theme variables */
+:root{
+  --bg: #ffffff;
+  --surface: #f8f9fa;
+  --muted: #6c757d;
+  --text: #212529;
+  --primary: #0d6efd;
+  --primary-600: #0b5ed7;
+  --accent: #0dcaf0;
+  --success: #198754;
+  --danger: #dc3545;
+  --card-shadow: 0 10px 30px rgba(33,37,41,0.06);
+  --radius: 10px;
+  --radius-sm: 6px;
+  --transition: 180ms ease;
+  --focus-ring: 0 0 0 6px rgba(13,110,253,0.08);
+  --max-width-form: 720px;
+  --font-family: system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial;
+}
+
+/* Page wrapper for accounts */
+.accounts-container {
+  font-family: var(--font-family);
+  color: var(--text);
+  padding: 1rem;
+}
+
+/* Card wrapper */
+.accounts-card {
+  max-width: var(--max-width-form);
+  margin: 1.5rem auto;
+  background: linear-gradient(180deg, #ffffff 0%, #fbfcfd 100%);
+  border-radius: var(--radius);
+  box-shadow: var(--card-shadow);
+  padding: 1.5rem;
+  border: 1px solid rgba(33,37,41,0.04);
+}
+
+/* Header */
+.accounts-card h2 {
+  margin: 0 0 0.35rem 0;
+  font-size: 1.5rem;
+  font-weight: 700;
+  letter-spacing: -0.2px;
+}
+.accounts-card .muted {
+  color: var(--muted);
+  margin-bottom: 1rem;
+  font-size: 0.95rem;
+}
+
+/* Floating label styles */
+.floating-label {
+  position: relative;
+  margin-bottom: 1.25rem;
+  font-size: 0.95rem;
+}
+
+.floating-label input,
+.floating-label textarea,
+.floating-label select {
+  width: 100%;
+  padding: 0.85rem 0.75rem;
+  border-radius: var(--radius-sm);
+  border: 1px solid rgba(33,37,41,0.12);
+  background: #fff;
+  transition: border var(--transition), box-shadow var(--transition), transform var(--transition);
+  font-size: 0.95rem;
+  color: var(--text);
+  box-sizing: border-box;
+  -webkit-appearance: none;
+  appearance: none;
+}
+
+.floating-label textarea { min-height: 110px; resize: vertical; }
+
+.floating-label label {
+  position: absolute;
+  left: 14px;
+  top: 50%;
+  transform: translateY(-50%);
+  background: transparent;
+  padding: 0 8px;
+  color: var(--muted);
+  pointer-events: none;
+  transition: transform 160ms ease, font-size 160ms ease, top 160ms ease, color 160ms ease;
+  font-weight: 600;
+  font-size: 0.95rem;
+}
+
+/* Float label on focus or when input has value */
+.floating-label input:focus + label,
+.floating-label input:not(:placeholder-shown) + label,
+.floating-label textarea:focus + label,
+.floating-label textarea:not(:placeholder-shown) + label,
+.floating-label select:focus + label,
+.floating-label select:not([value=""]) + label {
+  top: -10px;
+  transform: none;
+  font-size: 0.78rem;
+  color: var(--primary);
+  background: #fff;
+  padding-left: 6px;
+  padding-right: 6px;
+}
+
+/* Focus ring */
+.floating-label input:focus,
+.floating-label textarea:focus,
+.floating-label select:focus {
+  outline: none;
+  border-color: var(--primary-600);
+  box-shadow: var(--focus-ring);
+  transform: translateY(-1px);
+}
+
+/* Error state */
+.floating-label input.input-error,
+.floating-label textarea.input-error,
+.floating-label select.input-error {
+  border-color: var(--danger) !important;
+  box-shadow: 0 0 0 6px rgba(220,53,69,0.06);
+}
+.floating-label input.input-error + label,
+.floating-label textarea.input-error + label {
+  color: var(--danger);
+}
+
+/* Helper text and errors */
+.form-text { color: var(--muted); font-size: 0.88rem; margin-top: 0.25rem; }
+.text-danger { color: var(--danger); font-size: 0.85rem; }
+
+/* Buttons */
+.btn-primary {
+  background: var(--primary);
+  border-color: var(--primary);
+  color: #fff;
+  padding: 0.55rem 0.9rem;
+  border-radius: 8px;
+  font-weight: 700;
+  transition: transform var(--transition), box-shadow var(--transition);
+}
+.btn-primary:hover { background: var(--primary-600); transform: translateY(-2px); box-shadow: 0 8px 20px rgba(11,94,215,0.12); }
+.btn-link { color: var(--primary); text-decoration: none; font-weight: 600; }
+.btn-outline-secondary {
+  border: 1px solid rgba(33,37,41,0.08);
+  color: var(--text);
+  background: transparent;
+  padding: 0.45rem 0.8rem;
+  border-radius: 8px;
+}
+
+/* Actions layout */
+.password-reset-actions,
+.form-actions {
+  display: flex;
+  gap: 0.6rem;
+  align-items: center;
+  margin-top: 0.6rem;
+}
+
+/* Alerts */
+.alert {
+  border-radius: 8px;
+  padding: 0.75rem 1rem;
+  font-size: 0.95rem;
+}
+.alert-danger { background: rgba(220,53,69,0.06); color: var(--danger); border: 1px solid rgba(220,53,69,0.12); }
+.alert-warning { background: rgba(255,193,7,0.06); color: #856404; border: 1px solid rgba(255,193,7,0.12); }
+.alert-success { background: rgba(25,135,84,0.06); color: var(--success); border: 1px solid rgba(25,135,84,0.12); }
+
+/* Avatar preview */
+.avatar-preview {
+  width: 140px;
+  height: 140px;
+  border-radius: 12px;
+  object-fit: cover;
+  display: inline-block;
+  background: var(--surface);
+  border: 1px solid rgba(33,37,41,0.06);
+}
+
+/* Profile card details */
+.profile-card .card-title { font-weight: 700; margin-bottom: 0.25rem; }
+.profile-row { display: flex; gap: 1rem; align-items: center; flex-wrap: wrap; }
+
+/* Small helpers */
+.small-muted { color: var(--muted); font-size: 0.9rem; }
+.helper-inline { font-size: 0.9rem; color: var(--muted); }
+
+/* Accessibility focus for links and buttons */
+a:focus, button:focus {
+  outline: none;
+  box-shadow: var(--focus-ring);
+  border-radius: 8px;
+}
+
+/* Subtle separators */
+.accounts-card hr {
+  border: none;
+  border-top: 1px solid rgba(33,37,41,0.04);
+  margin: 1rem 0;
+}
+
+/* Responsive adjustments */
+@media (max-width: 992px) {
+  .accounts-card { padding: 1.25rem; margin: 1rem; }
+  .accounts-card h2 { font-size: 1.35rem; }
+}
+@media (max-width: 576px) {
+  .floating-label label { left: 12px; }
+  .floating-label input, .floating-label textarea { padding: 0.65rem 0.6rem; }
+  .accounts-card { padding: 1rem; border-radius: 8px; }
+}
+
+/* Utility classes */
+.text-center { text-align: center; }
+.mt-2 { margin-top: 0.5rem; }
+.mb-2 { margin-bottom: 0.5rem; }
+.gap-2 { gap: 0.5rem; }
+
+/* Print friendly */
+@media print {
+  .accounts-card { box-shadow: none; border: none; }
+  .btn-primary, .btn-link { display: none; }
+}

@@ -1,0 +1,223 @@
+/* =========================
+   Variables globales
+   ========================= */
+:root{
+  --primary: #0d6efd;
+  --muted: #666;
+  --search-max-width: 360px;
+  --search-min-width: 220px;
+  --search-btn-size: 44px;
+
+  /* Sweep (línea inferior) */
+  --sweep-height: 2px;
+  --sweep-bottom-offset: -6px; /* ajusta para bajar/subir la línea */
+  --sweep-transition: 320ms cubic-bezier(.2,.9,.3,1);
+}
+
+/* =========================
+   Reset ligero y utilidades
+   ========================= */
+* { box-sizing: border-box; }
+a { text-decoration: none; color: inherit; }
+.inline-block { display: inline-block; }
+
+/* =========================
+   Header principal
+   ========================= */
+header.bg-white {
+  position: sticky;
+  top: 0;
+  z-index: 1030;
+  background: #ffffff;
+  box-shadow: 0 1px 6px rgba(0,0,0,0.06);
+  backdrop-filter: blur(4px);
+}
+
+/* Contenedor: mantener consistencia con Bootstrap container */
+header .container {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  padding: 0.6rem 1rem;
+}
+
+/* =========================
+   Buscador (site-search)
+   ========================= */
+header .container > form#site-search,
+form#site-search.d-flex.w-50 {
+  max-width: var(--search-max-width) !important;
+  width: 100% !important;
+  flex: 0 0 auto !important;
+  margin-left: auto !important;
+  margin-right: auto !important;
+  box-sizing: border-box !important;
+}
+
+#site-search .input-group { width: 100%; }
+
+#site-search .search-input,
+.search-input.form-control {
+  border: 1px solid #e6e6e6 !important;
+  border-radius: 999px !important;
+  padding: 10px 14px !important;
+  background: #fff !important;
+  box-shadow: none !important;
+  outline: none !important;
+  font-size: 0.95rem !important;
+}
+
+#site-search .search-btn,
+.search-btn.btn {
+  border-radius: 999px !important;
+  padding: 0.35rem 0.9rem !important;
+  height: var(--search-btn-size) !important;
+  min-width: var(--search-btn-size) !important;
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+}
+
+#site-search .search-input:focus {
+  border-color: rgba(13,110,253,0.35) !important;
+  box-shadow: 0 0 0 4px rgba(13,110,253,0.06) !important;
+}
+
+/* =========================
+   Categorías — Sweep desde el centro
+   ========================= */
+
+/* Selector base: aplica tanto al enlace simple como al botón con clases Bootstrap */
+header .container a.categories-link.sweep,
+a.categories-link.sweep,
+a.btn.btn-outline-secondary.rounded-pill.px-3.categories-link.sweep {
+  display: inline-block;
+  position: relative; /* necesario para ::after */
+  padding: 0.15rem 0.25rem;
+  color: inherit;
+  font-weight: 600;
+  vertical-align: middle;
+  text-decoration: none !important; /* quitar subrayado por defecto */
+  line-height: 1.1;
+}
+
+/* Si usas el botón .btn y quieres eliminar la "píldora", esta regla lo neutraliza */
+header .container a.btn.btn-outline-secondary.rounded-pill.px-3.categories-link.sweep {
+  background: transparent !important;
+  border-color: transparent !important;
+  box-shadow: none !important;
+  padding-left: 0.25rem !important;
+  padding-right: 0.25rem !important;
+  border-radius: 0 !important;
+}
+
+/* Pseudo-elemento que dibuja la línea inferior */
+header .container a.categories-link.sweep::after,
+a.categories-link.sweep::after,
+a.btn.btn-outline-secondary.rounded-pill.px-3.categories-link.sweep::after {
+  content: "";
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: var(--sweep-bottom-offset);
+  height: var(--sweep-height);
+  background: linear-gradient(90deg, var(--primary) 0%, #6ea8fe 100%);
+  transform-origin: center;
+  transform: scaleX(0);
+  transition: transform var(--sweep-transition), opacity var(--sweep-transition);
+  pointer-events: none;
+  border-radius: 2px;
+  box-sizing: border-box;
+}
+
+/* Estado hover / focus / active: expande desde el centro */
+header .container a.categories-link.sweep:hover::after,
+header .container a.categories-link.sweep:focus::after,
+header .container a.categories-link.sweep:active::after,
+a.categories-link.sweep:hover::after,
+a.categories-link.sweep:focus::after,
+a.categories-link.sweep:active::after {
+  transform: scaleX(1);
+}
+
+/* Asegurar que no aparezca subrayado en estados visitados/hover */
+header .container a.categories-link.sweep:hover,
+header .container a.categories-link.sweep:focus,
+header .container a.categories-link.sweep:active {
+  text-decoration: none !important;
+}
+
+/* =========================
+   Carrito / Badge
+   ========================= */
+.cart-badge {
+  position: absolute;
+  top: -6px;
+  right: -8px;
+  font-size: 0.65rem;
+  padding: 0.18rem 0.45rem;
+  border-radius: 999px;
+  line-height: 1;
+}
+
+/* =========================
+   Responsive tweaks
+   ========================= */
+@media (max-width: 991px) {
+  :root { --search-max-width: 420px; }
+  header .container > form#site-search { max-width: var(--search-max-width) !important; }
+}
+
+@media (max-width: 767px) {
+  :root { --search-max-width: 100%; }
+  header .container { gap: .5rem; flex-wrap: wrap; }
+  header .container > form#site-search {
+    max-width: 100% !important;
+    padding-left: .5rem !important;
+    padding-right: .5rem !important;
+  }
+  a.categories-link.sweep { font-size: 0.95rem; }
+  a.categories-link.sweep::after { height: 1.6px; bottom: calc(var(--sweep-bottom-offset) + 2px); }
+}
+
+/* =========================
+   Motion reduce
+   ========================= */
+@media (prefers-reduced-motion: reduce) {
+  header .container a.categories-link.sweep::after,
+  a.categories-link.sweep:hover::after,
+  a.categories-link.sweep:focus::after {
+    transition: none;
+    transform: scaleX(1);
+  }
+}
+
+a.sweep::after {
+  content: "";
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: var(--sweep-bottom-offset, 0);
+  height: var(--sweep-height, 2px);
+  background: linear-gradient(90deg, var(--primary) 0%, #6ea8fe 100%);
+  transform-origin: center;
+  transform: scaleX(0);
+  transition: transform var(--sweep-transition, .25s ease), opacity var(--sweep-transition, .25s ease);
+  pointer-events: none;
+  border-radius: 2px;
+  box-sizing: border-box;
+}
+
+/* Activación al hover/focus */
+a.sweep:hover::after,
+a.sweep:focus::after {
+  transform: scaleX(1);
+  opacity: 1;
+}
+
+/* Asegurar que el enlace sea position:relative para que el ::after se posicione correctamente */
+a.sweep {
+  position: relative;
+  display: inline-block;
+}

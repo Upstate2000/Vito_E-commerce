@@ -1,0 +1,27 @@
+{% extends "base.html" %}
+{% load static %}
+{% load currency_filters %}
+
+{% block content %}
+<div class="container my-4">
+  <h2 class="mb-4">Carrito</h2>
+
+  {% if cart.cart %}
+    <div class="table-responsive mb-4">
+      {% include 'cart/_cart_table.html' %}
+    </div>
+
+    <h3 class="h5 mb-3">Lista de compras</h3>
+    {% include 'cart/_cart_list.html' %}
+
+    {% include 'cart/_cart_totals.html' %}
+  {% else %}
+    <div class="card cart-empty">
+      <div class="card-body text-center">
+        <p class="mb-2">Tu Carro está vacío.</p>
+        <a href="{% url 'catalog:product_list' %}" class="btn btn-primary">Ver productos</a>
+      </div>
+    </div>
+  {% endif %}
+</div>
+{% endblock %}

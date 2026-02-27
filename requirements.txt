@@ -1,0 +1,7 @@
+Django>=4.2
+Pillow
+django-environ
+
+pip install -r requirements.txt
+
+\venv\Scripts\Activate.ps1

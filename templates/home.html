@@ -1,0 +1,178 @@
+{% extends "base.html" %}
+{% load list_tags %}
+{% load static %}
+{% load form_tags %}
+{% load currency_filters %}
+
+{% block content %}
+<div class="container-fluid p-0">
+
+  <!-- Hero banner with three images -->
+  <div id="heroCarousel" class="carousel slide rounded-hero" data-bs-ride="carousel">
+    <div class="carousel-inner">
+      <div class="carousel-item active">
+        <img src="{% static 'images/hero1.jpg' %}" class="d-block w-100" alt="Hero 1" style="height:320px; object-fit:cover;">
+        <div class="carousel-caption d-none d-md-block text-start">
+          <h1 class="fw-bold">A tu gusto, irresistibles</h1>
+          <p class="lead">Descubre nuestras ofertas y novedades</p>
+          <a href="{% url 'catalog:products' %}" class="btn btn-primary">Ver productos</a>
+        </div>
+      </div>
+
+      <div class="carousel-item">
+        <img src="{% static 'images/hero2.jpg' %}" class="d-block w-100" alt="Hero 2" style="height:320px; object-fit:cover;">
+        <div class="carousel-caption d-none d-md-block text-start">
+          <h1 class="fw-bold">Frescura y sabor</h1>
+          <p class="lead">Seleccionados para ti</p>
+          <a href="/catalog/category/fruta-y-verdura/" class="btn btn-primary">Ver productos</a>
+        </div>
+      </div>
+
+      <div class="carousel-item">
+        <img src="{% static 'images/hero3.jpg' %}" class="d-block w-100" alt="Hero 3" style="height:320px; object-fit:cover;">
+        <div class="carousel-caption d-none d-md-block text-start">
+          <h1 class="fw-bold">Bedidas refrescantes</h1>
+          <p class="lead">Aprovecha los mejores precios</p>
+          <a href="/catalog/category/agua-y-refrescos/" class="btn btn-primary">Ver productos</a>
+        </div>
+      </div>
+    </div>
+
+    <button class="carousel-control-prev" type="button" data-bs-target="#heroCarousel" data-bs-slide="prev">
+      <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+      <span class="visually-hidden">Anterior</span>
+    </button>
+    <button class="carousel-control-next" type="button" data-bs-target="#heroCarousel" data-bs-slide="next">
+      <span class="carousel-control-next-icon" aria-hidden="true"></span>
+      <span class="visually-hidden">Siguiente</span>
+    </button>
+  </div>
+
+{# home.html - carruseles específicos para 'congelados' y 'arroz-y-pasta' #}
+{% load list_tags %}
+{% load currency_filters %}
+{% comment %} Asegúrate de que la vista pase 'carousel_congelados' y 'carousel_arroz_pasta' y sus categorías. {% endcomment %}
+
+{# --- Carrusel: Congelados --- #}
+{% if carousel_congelados_category and carousel_congelados_products %}
+<section class="container my-4 category-carousel-section" aria-labelledby="cat-{{ carousel_congelados_category.pk }}-title">
+  <div class="d-flex justify-content-between align-items-center mb-2">
+    <h5 id="cat-{{ carousel_congelados_category.pk }}-title" class="mb-0">{{ carousel_congelados_category.name }}</h5>
+    <a href="{{ carousel_congelados_category.get_absolute_url }}" class="small text-decoration-none">Ver todo</a>
+  </div>
+
+  <div id="carousel-congelados" class="carousel slide product-carousel" data-bs-ride="carousel" data-bs-interval="0">
+    <div class="carousel-inner">
+      {% for chunk in carousel_congelados_products|chunked:4 %}
+        <div class="carousel-item {% if forloop.first %}active{% endif %}">
+          <div class="row row-cols-1 row-cols-sm-2 row-cols-md-4 g-3">
+            {% for product in chunk %}
+              <div class="col">
+                <div class="card h-100 product-card-sm">
+                  <a href="#" data-bs-toggle="modal" data-bs-target="#modal-{{ product.id }}" class="d-block">
+                    <div class="product-image-sm" role="img" aria-label="{{ product.name }}">
+                      {% if product.image %}
+                        <img src="{{ product.image.url }}" alt="{{ product.name }}" loading="lazy">
+                      {% else %}
+                        <img src="{% static 'img/no-imagen.jpg' %}" alt="Sin imagen" loading="lazy">
+                      {% endif %}
+                    </div>
+                  </a>
+                  <div class="card-body p-2 d-flex flex-column">
+                    <div class="mb-1">
+                      <h6 class="product-name small mb-0 text-truncate">{{ product.name }}</h6>
+                      {% if product.footnote %}
+                        <small class="text-muted d-block text-truncate">{{ product.footnote }}</small>
+                      {% endif %}
+                    </div>
+                    <div class="mt-auto d-flex justify-content-between align-items-center">
+                      <strong class="product-price small">{{ product.price|format_cop }}</strong>
+                      <form action="{% url 'cart:add' product.id %}" method="post" class="m-0">
+                        {% csrf_token %}
+                        <input type="hidden" name="quantity" value="1">
+                        <button type="submit" class="btn btn-sm btn-primary">Añadir</button>
+                      </form>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            {% endfor %}
+          </div>
+        </div>
+      {% endfor %}
+    </div>
+
+    <button class="carousel-control-prev" type="button" data-bs-target="#carousel-congelados" data-bs-slide="prev" aria-label="Anterior {{ carousel_congelados_category.name }}">
+      <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+      <span class="visually-hidden">Anterior</span>
+    </button>
+    <button class="carousel-control-next" type="button" data-bs-target="#carousel-congelados" data-bs-slide="next" aria-label="Siguiente {{ carousel_congelados_category.name }}">
+      <span class="carousel-control-next-icon" aria-hidden="true"></span>
+      <span class="visually-hidden">Siguiente</span>
+    </button>
+  </div>
+</section>
+{% endif %}
+
+{# --- Carrusel: Arroz y pasta --- #}
+{% if carousel_arroz_pasta_category and carousel_arroz_pasta_products %}
+<section class="container my-4 category-carousel-section" aria-labelledby="cat-{{ carousel_arroz_pasta_category.pk }}-title">
+  <div class="d-flex justify-content-between align-items-center mb-2">
+    <h5 id="cat-{{ carousel_arroz_pasta_category.pk }}-title" class="mb-0">{{ carousel_arroz_pasta_category.name }}</h5>
+    <a href="{{ carousel_arroz_pasta_category.get_absolute_url }}" class="small text-decoration-none">Ver todo</a>
+  </div>
+
+  <div id="carousel-arroz-pasta" class="carousel slide product-carousel" data-bs-ride="carousel" data-bs-interval="0">
+    <div class="carousel-inner">
+      {% for chunk in carousel_arroz_pasta_products|chunked:4 %}
+        <div class="carousel-item {% if forloop.first %}active{% endif %}">
+          <div class="row row-cols-1 row-cols-sm-2 row-cols-md-4 g-3">
+            {% for product in chunk %}
+              <div class="col">
+                <div class="card h-100 product-card-sm">
+                  <a href="#" data-bs-toggle="modal" data-bs-target="#modal-{{ product.id }}" class="d-block">
+                    <div class="product-image-sm" role="img" aria-label="{{ product.name }}">
+                      {% if product.image %}
+                        <img src="{{ product.image.url }}" alt="{{ product.name }}" loading="lazy">
+                      {% else %}
+                        <img src="{% static 'img/no-imagen.jpg' %}" alt="Sin imagen" loading="lazy">
+                      {% endif %}
+                    </div>
+                  </a>
+                  <div class="card-body p-2 d-flex flex-column">
+                    <div class="mb-1">
+                      <h6 class="product-name small mb-0 text-truncate">{{ product.name }}</h6>
+                      {% if product.footnote %}
+                        <small class="text-muted d-block text-truncate">{{ product.footnote }}</small>
+                      {% endif %}
+                    </div>
+                    <div class="mt-auto d-flex justify-content-between align-items-center">
+                      <strong class="product-price small">{{ product.price|format_cop }}</strong>
+                      <form action="{% url 'cart:add' product.id %}" method="post" class="m-0">
+                        {% csrf_token %}
+                        <input type="hidden" name="quantity" value="1">
+                        <button type="submit" class="btn btn-sm btn-primary">Añadir</button>
+                      </form>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            {% endfor %}
+          </div>
+        </div>
+      {% endfor %}
+    </div>
+
+    <button class="carousel-control-prev" type="button" data-bs-target="#carousel-arroz-pasta" data-bs-slide="prev" aria-label="Anterior {{ carousel_arroz_pasta_category.name }}">
+      <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+      <span class="visually-hidden">Anterior</span>
+    </button>
+    <button class="carousel-control-next" type="button" data-bs-target="#carousel-arroz-pasta" data-bs-slide="next" aria-label="Siguiente {{ carousel_arroz_pasta_category.name }}">
+      <span class="carousel-control-next-icon" aria-hidden="true"></span>
+      <span class="visually-hidden">Siguiente</span>
+    </button>
+  </div>
+</section>
+{% endif %}
+
+{% endblock %}

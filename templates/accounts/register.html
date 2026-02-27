@@ -1,0 +1,36 @@
+{% extends "base.html" %}
+{% load form_tags %}
+{% block content %}
+<div class="accounts-container">
+  <div class="accounts-card">
+    <h2 class="mb-3">Crear cuenta</h2>
+
+    {% if messages %}
+      {% for message in messages %}
+        <div class="alert alert-{{ message.tags }} mt-2" role="alert">{{ message }}</div>
+      {% endfor %}
+    {% endif %}
+
+    <form method="post" novalidate>
+      {% csrf_token %}
+      {% for field in form %}
+        <div class="floating-label">
+          {{ field }}
+          <label for="{{ field.id_for_label }}">{{ field.label }}</label>
+          {% if field.help_text %}
+            <div class="form-text">{{ field.help_text }}</div>
+          {% endif %}
+          {% if field.errors %}
+            <div class="text-danger small mt-1">{{ field.errors|striptags }}</div>
+          {% endif %}
+        </div>
+      {% endfor %}
+
+      <div class="d-flex gap-2">
+        <button type="submit" class="btn btn-primary">Crear cuenta</button>
+        <a href="{% url 'accounts:login' %}" class="btn btn-outline-secondary">Ya tengo cuenta</a>
+      </div>
+    </form>
+  </div>
+</div>
+{% endblock %}

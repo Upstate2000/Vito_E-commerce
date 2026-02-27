@@ -1,0 +1,79 @@
+{% load static %}
+{% load currency_filters %}
+
+<div class="modal-header">
+  <h5 class="modal-title" id="modal-title-{{ product.id }}">{{ product.name }}</h5>
+  <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cerrar"></button>
+</div>
+
+<div class="modal-body" role="document" aria-labelledby="modal-title-{{ product.id }}">
+  <div class="row g-3">
+    <div class="col-md-5">
+      {% if product.image %}
+        <img src="{{ product.image.url }}" alt="{{ product.name }}" class="img-fluid w-100 rounded" loading="lazy">
+      {% else %}
+        <div class="product-image-placeholder border rounded d-flex align-items-center justify-content-center w-100" style="height:200px;">
+          <span class="text-muted">Sin imagen</span>
+        </div>
+      {% endif %}
+    </div>
+
+    <div class="col-md-7">
+      <p class="mb-2">
+        <strong>Categoría:</strong>
+        {% if product.category %}
+          <a href="{{ product.category.get_absolute_url }}" class="text-decoration-none">
+            {{ product.category.name }}
+          </a>
+        {% else %}
+          <span class="text-muted">—</span>
+        {% endif %}
+      </p>
+
+      {% if product.description %}
+        <div class="description mb-3 text-muted">
+          {{ product.description|linebreaks }}
+        </div>
+      {% endif %}
+
+      <p class="price h5 mb-2">
+        <strong>Precio:</strong>
+        {{ product.price|format_cop }}
+      </p>
+
+      <p class="stock mb-3" id="stock-info-{{ product.id }}">
+        {% if product.stock|default:0 > 0 %}
+          <span class="text-success">En stock: {{ product.stock }}</span>
+        {% else %}
+          <span class="text-danger">Agotado</span>
+        {% endif %}
+      </p>
+
+      {% if product.stock|default:0 > 0 %}
+        <form action="{% url 'cart:add' product.id %}" method="post" class="d-flex align-items-center gap-2" aria-label="Añadir {{ product.name }} al carro">
+          {% csrf_token %}
+          <label for="quantity-{{ product.id }}" class="visually-hidden">Cantidad</label>
+          <input
+            id="quantity-{{ product.id }}"
+            name="quantity"
+            type="number"
+            value="1"
+            min="1"
+            max="{{ product.stock|default:0 }}"
+            class="form-control form-control-sm"
+            style="width:80px;"
+            aria-describedby="stock-info-{{ product.id }}">
+          <input type="hidden" name="next" value="{{ request.get_full_path }}">
+          <button type="submit" class="btn btn-primary btn-sm">Añadir al carro</button>
+        </form>
+      {% endif %}
+    </div>
+  </div>
+</div>
+
+<div class="modal-footer">
+  <a href="{{ product.get_absolute_url }}" class="btn btn-outline-secondary btn-sm" aria-label="Ir a la página de {{ product.name }}">
+    Ver página del producto
+  </a>
+  <button type="button" class="btn btn-secondary btn-sm" data-bs-dismiss="modal">Cerrar</button>
+</div>

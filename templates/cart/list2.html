@@ -1,0 +1,145 @@
+{% extends "base.html" %}
+{% load static %}
+{% load currency_filters %}
+
+{% block content %}
+<div class="container my-4">
+  <h2 class="mb-4">Carrito</h2>
+
+  {% if cart.cart %}
+    <!-- Tabla detallada -->
+    <div class="table-responsive mb-4">
+      <table class="table cart-table align-middle">
+        <thead>
+          <tr>
+            <th scope="col">Producto</th>
+            <th scope="col" class="text-end">Precio</th>
+            <th scope="col" class="text-center">Cantidad</th>
+            <th scope="col" class="text-end">Total</th>
+            <th scope="col" class="text-center">Acciones</th>
+          </tr>
+        </thead>
+
+        <tbody>
+          {% for item in cart %}
+            <tr id="cart-row-{{ item.product.id }}">
+              <td>
+                <div class="d-flex align-items-center">
+                  {% if item.product.image %}
+                    <img src="{{ item.product.image.url }}" alt="{{ item.product.name }}" class="me-3 cart-product-img" loading="lazy" style="height:64px;width:64px;object-fit:cover;border-radius:6px;">
+                  {% else %}
+                    <div class="me-3 cart-product-placeholder" aria-hidden="true" style="height:64px;width:64px;display:flex;align-items:center;justify-content:center;background:#f5f5f5;border-radius:6px;">Sin imagen</div>
+                  {% endif %}
+
+                  <div class="min-w-0">
+                    <a href="{{ item.product.get_absolute_url }}" class="fw-semibold text-dark d-block text-truncate" title="{{ item.product.name }}">
+                      {{ item.product.name }}
+                    </a>
+                    {% if item.product.short_description %}
+                      <div class="text-muted small text-truncate">{{ item.product.short_description }}</div>
+                    {% endif %}
+                  </div>
+                </div>
+              </td>
+
+              <td class="text-end" aria-label="Precio unitario">{{ item.price|format_cop }}</td>
+
+              <td class="text-center">
+                <form action="{% url 'cart:add' item.product.id %}" method="post" class="d-inline-flex align-items-center" aria-label="Actualizar cantidad de {{ item.product.name }}">
+                  {% csrf_token %}
+                  <input type="hidden" name="next" value="{{ request.get_full_path }}">
+                  <input type="number" name="quantity" value="{{ item.quantity }}" min="1" max="{{ item.product.stock|default:9999 }}" class="form-control form-control-sm text-center cart-qty-input" aria-label="Cantidad de {{ item.product.name }}" style="width:90px;">
+                  <button type="submit" class="btn btn-sm btn-outline-primary ms-2">Actualizar</button>
+                </form>
+              </td>
+
+              <td class="text-end" aria-label="Total del artículo">{{ item.total_price|format_cop }}</td>
+
+              <td class="text-center">
+                <form action="{% url 'cart:remove' item.product.id %}" method="post" class="d-inline" aria-label="Eliminar {{ item.product.name }}">
+                  {% csrf_token %}
+                  <input type="hidden" name="next" value="{{ request.get_full_path }}">
+                  <button type="submit" class="btn btn-sm btn-outline-danger">Eliminar</button>
+                </form>
+              </td>
+            </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+
+    <!-- Lista compacta reutilizando shopping-list styles -->
+    <h3 class="h5 mb-3">Lista de compras</h3>
+    <ul class="shopping-list mb-4">
+      {% for item in cart %}
+        <li class="shopping-item d-flex gap-3 align-items-start" id="shopping-item-{{ item.product.id }}">
+          <div class="shopping-item__media" style="flex:0 0 56px;">
+            {% if item.product.image %}
+              <img src="{{ item.product.image.url }}" alt="{{ item.product.name }}" loading="lazy" style="height:56px;width:56px;object-fit:cover;border-radius:6px;">
+            {% else %}
+              <img src="{% static 'img/no-imagen.jpg' %}" alt="Sin imagen de {{ item.product.name }}" loading="lazy" style="height:56px;width:56px;object-fit:cover;border-radius:6px;">
+            {% endif %}
+          </div>
+
+          <div class="shopping-item__body flex-grow-1">
+            <a href="{{ item.product.get_absolute_url }}" class="h6 text-dark fw-semibold d-block text-truncate" title="{{ item.product.name }}">
+              {{ item.product.name }}
+            </a>
+
+            {% if item.product.short_description %}
+              <div class="text-muted small">{{ item.product.short_description }}</div>
+            {% endif %}
+
+            <div class="d-flex justify-content-between align-items-center mt-2">
+              <div>
+                <span class="fw-semibold">{{ item.price|format_cop }}</span>
+                <span class="small text-muted">/ud.</span>
+              </div>
+
+              <form action="{% url 'cart:add' item.product.id %}" method="post" class="cart-form-inline d-flex align-items-center" aria-label="Actualizar cantidad de {{ item.product.name }}">
+                {% csrf_token %}
+                <input type="hidden" name="next" value="{{ request.get_full_path }}">
+                <input type="number" name="quantity" value="{{ item.quantity }}" min="1" max="{{ item.product.stock|default:9999 }}" class="form-control form-control-sm" style="width:90px;">
+                <button type="submit" class="btn btn-sm btn-outline-primary ms-2">Actualizar</button>
+              </form>
+            </div>
+
+            <div class="d-flex justify-content-between align-items-center mt-2">
+              <div class="fw-bold">{{ item.total_price|format_cop }}</div>
+              <form action="{% url 'cart:remove' item.product.id %}" method="post" class="d-inline" aria-label="Eliminar {{ item.product.name }}">
+                {% csrf_token %}
+                <input type="hidden" name="next" value="{{ request.get_full_path }}">
+                <button type="submit" class="btn btn-sm btn-outline-danger">Eliminar</button>
+              </form>
+            </div>
+          </div>
+        </li>
+      {% endfor %}
+    </ul>
+
+    <!-- Footer -->
+    <div class="cart-footer d-flex justify-content-between align-items-center mt-4">
+      <div>
+        <a href="{% url 'catalog:product_list' %}" class="btn btn-link">Seguir comprando</a>
+      </div>
+
+      <div class="text-end">
+        <div class="mb-2"><small class="text-muted">Subtotal</small></div>
+        <div class="h5 mb-3" aria-label="Total del carrito">{{ cart.get_total_price|format_cop }}</div>
+        <div class="d-flex gap-2 justify-content-end">
+          <a href="{% url 'cart:detail' %}" class="btn btn-outline-secondary">Actualizar</a>
+          <a href="{% url 'orders:checkout' %}" class="btn btn-primary">Ir a pagar</a>
+        </div>
+      </div>
+    </div>
+
+  {% else %}
+    <div class="card cart-empty">
+      <div class="card-body text-center">
+        <p class="mb-2">Tu Carro está vacío.</p>
+        <a href="{% url 'catalog:product_list' %}" class="btn btn-primary">Ver productos</a>
+      </div>
+    </div>
+  {% endif %}
+</div>
+{% endblock %}

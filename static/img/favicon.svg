@@ -1,0 +1,118 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg id="Capa_2" data-name="Capa 2" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" viewBox="0 0 29.4 20.33">
+  <defs>
+    <style>
+      .cls-1 {
+        clip-path: url(#clippath-6);
+      }
+
+      .cls-2 {
+        clip-path: url(#clippath-7);
+      }
+
+      .cls-3 {
+        clip-path: url(#clippath-4);
+      }
+
+      .cls-4 {
+        fill: #0056b3;
+      }
+
+      .cls-5 {
+        fill: none;
+      }
+
+      .cls-6 {
+        fill: #f6426f;
+      }
+
+      .cls-7 {
+        clip-path: url(#clippath-1);
+      }
+
+      .cls-8 {
+        isolation: isolate;
+      }
+
+      .cls-9 {
+        clip-path: url(#clippath-5);
+      }
+
+      .cls-10 {
+        clip-path: url(#clippath-8);
+      }
+
+      .cls-11 {
+        clip-path: url(#clippath-3);
+      }
+
+      .cls-12 {
+        fill: #3da745;
+      }
+
+      .cls-13 {
+        clip-path: url(#clippath-2);
+      }
+
+      .cls-14 {
+        clip-path: url(#clippath);
+      }
+    </style>
+    <clipPath id="clippath">
+      <rect class="cls-5" x="9.39" y="2.2" width="10.61" height="10.61" transform="translate(-1 12.59) rotate(-45)"/>
+    </clipPath>
+    <clipPath id="clippath-1">
+      <path class="cls-5" d="M12.45,12.76c-2.9-2.9-2.9-7.61,0-10.51l2.25-2.25,2.25,2.25c2.9,2.9,2.9,7.61,0,10.51l-2.25,2.25-2.25-2.25Z"/>
+    </clipPath>
+    <clipPath id="clippath-2">
+      <rect class="cls-5" x="9.36" y="-.03" width="10.56" height="15.12"/>
+    </clipPath>
+    <clipPath id="clippath-3">
+      <rect class="cls-5" y="9.72" width="10.61" height="10.61"/>
+    </clipPath>
+    <clipPath id="clippath-4">
+      <path class="cls-5" d="M3.18,9.72c4.09,0,7.43,3.34,7.43,7.43v3.18h-3.18c-4.09,0-7.43-3.34-7.43-7.43v-3.18h3.18Z"/>
+    </clipPath>
+    <clipPath id="clippath-5">
+      <rect class="cls-5" y="9.57" width="10.8" height="10.8"/>
+    </clipPath>
+    <clipPath id="clippath-6">
+      <rect class="cls-5" x="18.79" y="9.71" width="10.61" height="10.61"/>
+    </clipPath>
+    <clipPath id="clippath-7">
+      <path class="cls-5" d="M18.79,17.14c0-4.09,3.34-7.43,7.43-7.43h3.18v3.18c0,4.09-3.34,7.43-7.43,7.43h-3.18v-3.18Z"/>
+    </clipPath>
+    <clipPath id="clippath-8">
+      <rect class="cls-5" x="18.72" y="9.57" width="10.8" height="10.8"/>
+    </clipPath>
+  </defs>
+  <g id="Capa_1-2" data-name="Capa 1">
+    <g class="cls-14">
+      <g class="cls-7">
+        <g class="cls-8">
+          <g class="cls-13">
+            <rect class="cls-4" x="9.39" y="2.2" width="10.61" height="10.61" transform="translate(-1 12.59) rotate(-45)"/>
+          </g>
+        </g>
+      </g>
+    </g>
+    <g class="cls-11">
+      <g class="cls-3">
+        <g class="cls-8">
+          <g class="cls-9">
+            <rect class="cls-12" y="9.72" width="10.61" height="10.61"/>
+          </g>
+        </g>
+      </g>
+    </g>
+    <g class="cls-1">
+      <g class="cls-2">
+        <g class="cls-8">
+          <g class="cls-10">
+            <rect class="cls-6" x="18.79" y="9.71" width="10.61" height="10.61"/>
+          </g>
+        </g>
+      </g>
+    </g>
+  </g>
+</svg>

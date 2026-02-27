@@ -1,0 +1,50 @@
+{% extends "base.html" %}
+{% load static %}
+{% load currency_filters %}
+
+{% block content %}
+<div class="container my-4">
+  <h2>Tramitar pedido</h2>
+
+  <div class="row g-4">
+    <div class="col-md-6">
+      <form method="post" novalidate>
+        {% csrf_token %}
+        {{ form.non_field_errors }}
+        {% for field in form %}
+          <div class="mb-3">
+            <label class="form-label">{{ field.label }}</label>
+            {{ field }}
+            {% if field.errors %}
+              <div class="text-danger small">{{ field.errors|striptags }}</div>
+            {% endif %}
+          </div>
+        {% endfor %}
+        <button type="submit" class="btn btn-primary">Confirmar pedido</button>
+      </form>
+    </div>
+
+    <div class="col-md-6">
+      <h5>Resumen del pedido</h5>
+      <ul class="list-unstyled">
+        {% for item in cart %}
+          <li class="d-flex justify-content-between py-2 border-bottom">
+            <div>
+              <strong>{{ item.product.name }}</strong>
+              <div class="small text-muted">Cantidad: {{ item.quantity }}</div>
+            </div>
+            <div class="text-end">
+              <div aria-label="Precio del artículo">{{ item.total_price|format_cop }}</div>
+            </div>
+          </li>
+        {% endfor %}
+      </ul>
+
+      <div class="mt-3 text-end">
+        <div class="small text-muted">Total aproximado</div>
+        <div class="h4" aria-label="Total del carrito">{{ cart.get_total_price|format_cop }}</div>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}

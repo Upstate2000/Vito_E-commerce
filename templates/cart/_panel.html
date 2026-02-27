@@ -1,0 +1,101 @@
+{# templates/cart/_panel.html #}
+{% load static %}
+{% load currency_filters %}
+
+<div class="cart-panel__header d-flex justify-content-between align-items-center">
+  <h3 id="cart-panel-title" class="m-0">Carro</h3>
+  <a href="{{ request.path }}" class="cart-panel__close btn btn-sm btn-light" aria-label="Cerrar carrito">Cerrar</a>
+</div>
+
+<div class="cart-panel__body" role="document" aria-labelledby="cart-panel-title">
+  {% if cart.cart %}
+    <ul class="cart-items list-unstyled mb-0" aria-live="polite">
+      {% for item in cart %}
+        <li class="cart-item d-flex gap-3 py-2" id="cart-item-{{ item.product.id }}">
+          <!-- Imagen -->
+          <div class="cart-item__media flex-shrink-0" style="width:64px;">
+            {% if item.product.image %}
+              <img src="{{ item.product.image.url }}" alt="{{ item.product.name|default:'Producto' }}" class="img-fluid rounded" loading="lazy" style="height:64px; width:64px; object-fit:cover;">
+            {% else %}
+              <img src="{% static 'img/no-imagen.jpg' %}" alt="Sin imagen de {{ item.product.name|default:'Producto' }}" class="img-fluid rounded" loading="lazy" style="height:64px; width:64px; object-fit:cover;">
+            {% endif %}
+          </div>
+
+          <!-- Información -->
+          <div class="cart-item__info flex-grow-1">
+            <div class="d-flex justify-content-between align-items-start">
+              <div class="me-2">
+                <a href="{{ item.product.get_absolute_url }}" class="text-decoration-none text-dark fw-semibold">
+                  {{ item.product.name }}
+                </a>
+
+                {% if item.product.short_description %}
+                  <div class="text-muted small mt-1">{{ item.product.short_description }}</div>
+                {% endif %}
+
+                {% if item.low_stock %}
+                  <div class="text-warning small mt-1" role="status">Quedan {{ item.product.stock|default:0 }} unidades</div>
+                {% endif %}
+              </div>
+
+              <div class="text-end">
+                <div class="fw-semibold" aria-label="Precio unitario">{{ item.price|format_cop }}</div>
+                <div class="small text-muted">/ud.</div>
+              </div>
+            </div>
+
+            <!-- Cantidad y subtotal -->
+            <div class="d-flex justify-content-between align-items-center mt-2">
+              <form action="{% url 'cart:add' item.product.id %}" method="post"
+                    class="cart-form-inline d-flex align-items-center"
+                    aria-label="Actualizar cantidad de {{ item.product.name }}">
+                {% csrf_token %}
+                <input type="hidden" name="next" value="{{ request.get_full_path }}#cart-panel">
+                <input type="hidden" name="update" value="1">
+                <label for="qty-{{ item.product.id }}" class="visually-hidden">Cantidad</label>
+                <input id="qty-{{ item.product.id }}" name="quantity" type="number"
+                       class="form-control form-control-sm cart-qty-input"
+                       value="{{ item.quantity }}" min="1" max="{{ item.product.stock|default:9999 }}" style="width:80px;">
+                <button type="submit" class="btn btn-sm btn-outline-primary ms-2">Actualizar</button>
+              </form>
+
+              <div class="text-end small">
+                <div class="text-muted">Subtotal</div>
+                <div class="fw-bold" aria-label="Subtotal del artículo">{{ item.total_price|format_cop }}</div>
+              </div>
+            </div>
+
+            <!-- Eliminar -->
+            <div class="mt-2">
+              <form action="{% url 'cart:remove' item.product.id %}" method="post" class="d-inline"
+                    aria-label="Eliminar {{ item.product.name }}">
+                {% csrf_token %}
+                <input type="hidden" name="next" value="{{ request.get_full_path }}#cart-panel">
+                <button type="submit" class="btn btn-sm btn-outline-danger">Eliminar</button>
+              </form>
+            </div>
+          </div>
+        </li>
+      {% endfor %}
+    </ul>
+
+    <!-- Footer -->
+    <div class="cart-panel__footer mt-3 d-flex justify-content-between align-items-center gap-3 flex-wrap">
+      <div>
+        <small class="text-muted">Total aproximado</small>
+        <div class="cart-total__amount h5 mb-0" aria-label="Total del carrito">{{ cart.get_total_price|format_cop }}</div>
+      </div>
+
+      <div class="d-flex gap-2">
+        <a href="{% url 'catalog:product_list' %}" class="btn btn-outline-secondary">Seguir comprando</a>
+        <a href="{% url 'orders:checkout' %}" class="btn btn-primary">Tramitar pedido</a>
+      </div>
+    </div>
+
+  {% else %}
+    <div class="cart-empty text-center py-4">
+      <p class="mb-3">Tu carro está vacío.</p>
+      <a href="{% url 'catalog:product_list' %}" class="btn btn-primary">Ver productos</a>
+    </div>
+  {% endif %}
+</div>
