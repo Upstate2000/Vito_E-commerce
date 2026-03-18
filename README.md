@@ -1,4 +1,5 @@
 ## Requisitos
+- Git instalado
 - Python 3.10+
 - pip (gestor de paquetes)
 - virtualenv o el módulo venv integrado
@@ -17,8 +18,9 @@ cd myshop
 source venv/bin/activate
 
 3. Instala dependencias:
+   pip install -U pip
    pip install -r requirements.txt
-4. Crear el archivo de entorno.
+5. Crear el archivo de entorno.
 cp .env.example .env
 # editar .env según sea necesario
 
